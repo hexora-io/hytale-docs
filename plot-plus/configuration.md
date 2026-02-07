@@ -95,16 +95,38 @@ mods/Hexora_PlotPlus/languages/
 3. Edit the messages as needed
 4. Use `/plot reload` to apply changes
 
+### i18n Auto-Merge
+
+When PlotPlus updates and adds new translation keys, the **auto-merge system** automatically adds missing keys to your language files on startup. Your customizations are preserved — only new keys are added. You never need to manually update language files after a plugin update.
+
+### Customizable Chat Prefix
+
+Each language file includes a `"prefix"` key that controls the chat prefix (e.g., `[Plots]`). The prefix is **locale-aware** — each language can have its own prefix:
+
+```json
+{
+  "prefix": "[Plots]"
+}
+```
+
+Set `"prefix": ""` (empty string) to completely disable the prefix for a language.
+
 ### Example Translation File
 
 ```json
 {
+  "prefix": "[Plots]",
   "error": {
-    "no_permission": "You don't have permission to do this.",
-    "player_only": "This command can only be used by players."
+    "common": {
+      "player_only": "This command can only be used by players.",
+      "no_permission": "You don't have permission to do this."
+    },
+    "plot": {
+      "not_claimed": "This plot is not claimed."
+    }
   },
   "success": {
-    "plot": {
+    "claim": {
       "claimed": "You have claimed this plot!"
     }
   }
@@ -119,9 +141,13 @@ Translations support placeholders using `{placeholder}` format:
 "claimed_by_other": "This plot is owned by {owner}."
 ```
 
+### Error ID Tracking
+
+When an internal error occurs, players see a user-friendly message with a unique error ID (e.g., `a1b2c3d4`). Server admins can look up the full error details in the server logs using this ID.
+
 ### Migration from .lang Files
 
-If you're upgrading from an older version, your old `.lang` files will be automatically moved to `languages/old/` folder. You can reference them when customizing the new JSON files.
+If you're upgrading from v1, your old `.lang` files are automatically moved to `languages/old/`. The auto-merge system handles all key changes automatically.
 
 ---
 

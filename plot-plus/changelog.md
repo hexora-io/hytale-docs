@@ -4,6 +4,122 @@ All notable changes to this project will be documented in this file.
 
 ---
 
+## [2.0.0-beta.3] - 2026-02-07
+
+### New Features
+
+#### Auto-Claim Teleport
+- `/plot auto` now automatically teleports you to the claimed plot after a successful claim
+
+### Improvements
+
+#### Locale-Aware Message Prefix
+- The chat prefix (e.g. `[Plots]`) now correctly respects **each language file's** `"prefix"` setting
+- Setting `"prefix": ""` in a language file now fully disables the prefix in all messages
+
+#### Better Error Messages
+- Command errors now show a user-friendly message with a unique error ID instead of raw error text
+- Server admins can use the error ID to find the full details in server logs
+- Error messages are fully translated in all 10 supported languages
+
+### Fixed
+- Fixed MySQL database connection not working
+- Fixed `{price}` placeholder not working in `/plot claim` and `/plot auto` messages
+- Fixed potential server crash when async command execution encountered errors
+
+---
+
+## [2.0.0-beta.2] - 2026-01-30
+
+### New Features
+
+#### Customizable Chat Prefix
+- Chat prefix `[Plots]` is now fully customizable via language files
+- Set `"prefix": "YourPrefix"` in any language file to customize
+- Set `"prefix": ""` (empty) to completely disable the prefix
+- Each language can have its own prefix (e.g., Turkish uses `[Arsalar]`)
+
+#### i18n Auto-Merge System
+- Missing translation keys are now automatically added to user language files
+- When new keys are added in updates, they merge into existing translations
+- User customizations are preserved during merge
+- Eliminates need to manually update language files after plugin updates
+
+### Improvements
+- Turkish translations updated with proper Turkish characters (ö, ü, ç)
+- All language files restructured to new nested JSON format
+
+---
+
+## [2.0.0-beta.1] - 2026-01-30
+
+### Breaking Changes
+
+This is a major update with breaking changes. See the [Migration Guide](migration.md) for upgrade instructions.
+
+#### Permission Changes
+| Old Permission | New Permission |
+|----------------|----------------|
+| `plots.unmerge` | `plots.unlink` |
+| `plots.unclaim` | `plots.delete` |
+| `plots.ban` | `plots.deny` |
+| `plots.reset` | `plots.clear` |
+| `plots.claim` (for /plot auto) | `plots.auto` |
+| `plots.transfer` | Removed (now `plots.admin.command.setowner`) |
+
+#### Translation Key Changes
+All translation keys have been restructured. The i18n auto-merge system handles this automatically.
+
+### New Features
+
+#### Plot Marketplace
+- `/plot sell <price>` - List your plot for sale
+- `/plot sell cancel` - Remove plot from sale
+- `/plot buy` - Purchase the plot you're standing on
+- Sale status shown in `/plot info`
+- New permissions: `plots.command.sell`, `plots.command.buy`
+
+#### New Commands
+- `/plot kick <player|*>` - Kick players from your plot
+- `/plot middle` - Teleport to plot center (works with merged plots)
+- `/plot sethome` - Set custom home location for your plot
+- `/plot alias <name>` - Give your plot a custom name
+- `/plot desc <text>` - Set a description for your plot
+- `/plot add <player>` - Add player as member (can build when owner is online)
+- `/plot delete` - Delete your own plot (with refund if economy enabled)
+
+#### Command Renames
+Old names still work as aliases:
+- `/plot reset` → `/plot clear`
+- `/plot unmerge` → `/plot unlink`
+- `/plot ban` → `/plot deny`
+- `/plot untrust` → `/plot remove`
+- `/plot transfer` → `/plot setowner` (now admin-only)
+
+#### Granular Admin Permissions
+18 specific admin permissions instead of all-or-nothing `plots.admin`. See [Permissions](permissions.md).
+
+#### Membership System
+- New role: **Member** (via `/plot add`) - Can build only when owner is online
+- **Trusted** players (via `/plot trust`) - Can build anytime
+- Members and trusted shown separately in `/plot info`
+
+### Improvements
+- Plot info now shows alias, description, and sale status
+- Restructured translation files for better organization
+
+---
+
+## [1.7.3] - 2026-01-29
+
+### Fixed
+- Players can no longer steal flowers and plants from other plots using F key
+
+### Changed
+- Build optimizations and internal improvements
+
+---
+
 ## [1.7.2] - 2026-01-29
 
 ### Fixed

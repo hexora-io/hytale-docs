@@ -114,7 +114,7 @@ flags:
 |---------|-------------|
 | `enabled` | Enable economy integration for this world |
 | `claim_cost` | Cost to claim a plot |
-| `sell_price` | Refund amount when unclaiming a plot |
+| `sell_price` | Refund amount when deleting a plot (`/plot delete`) |
 
 ### flags
 

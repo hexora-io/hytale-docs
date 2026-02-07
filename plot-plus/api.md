@@ -57,7 +57,7 @@ getEventRegistry().registerGlobal(PlotClaimEvent.class, event -> {
 
 #### PlotUnclaimEvent
 
-Fired when a player unclaims a plot.
+Fired when a player unclaims/deletes a plot.
 
 ```java
 getEventRegistry().registerGlobal(PlotUnclaimEvent.class, event -> {
@@ -83,7 +83,7 @@ getEventRegistry().registerGlobal(PlotTransferEvent.class, event -> {
 
 #### PlotMemberAddEvent
 
-Fired when a member is added (trusted or banned).
+Fired when a member is added to a plot (trusted, member, or denied).
 
 ```java
 getEventRegistry().registerGlobal(PlotMemberAddEvent.class, event -> {
@@ -91,14 +91,14 @@ getEventRegistry().registerGlobal(PlotMemberAddEvent.class, event -> {
     Plot plot = event.getPlot();
     UUID memberUuid = event.getMemberUuid();
     String memberName = event.getMemberName();
-    PlotRole role = event.getRole(); // TRUSTED or DENIED
+    PlotRole role = event.getRole(); // TRUSTED, MEMBER, or DENIED
     boolean isBan = event.isBan();
 });
 ```
 
 #### PlotMemberRemoveEvent
 
-Fired when a member is removed.
+Fired when a member is removed from a plot.
 
 ```java
 getEventRegistry().registerGlobal(PlotMemberRemoveEvent.class, event -> {
@@ -107,6 +107,19 @@ getEventRegistry().registerGlobal(PlotMemberRemoveEvent.class, event -> {
     UUID memberUuid = event.getMemberUuid();
     PlotRole previousRole = event.getPreviousRole();
     boolean wasUnban = event.wasUnban();
+});
+```
+
+#### PlotKickEvent
+
+Fired when a player is kicked from a plot.
+
+```java
+getEventRegistry().registerGlobal(PlotKickEvent.class, event -> {
+    Player kicker = event.getKicker();
+    Plot plot = event.getPlot();
+    PlayerRef target = event.getTargetRef();
+    String reason = event.getReason();
 });
 ```
 
@@ -235,6 +248,43 @@ getEventRegistry().registerGlobal(PlotUnmergeEvent.class, event -> {
 });
 ```
 
+#### PlotListedForSaleEvent
+
+Fired when a plot is listed for sale on the marketplace.
+
+```java
+getEventRegistry().registerGlobal(PlotListedForSaleEvent.class, event -> {
+    Player player = event.getPlayer();
+    Plot plot = event.getPlot();
+    double price = event.getPrice();
+});
+```
+
+#### PlotPurchaseEvent
+
+Fired when a plot is purchased from the marketplace.
+
+```java
+getEventRegistry().registerGlobal(PlotPurchaseEvent.class, event -> {
+    Player buyer = event.getBuyer();
+    Plot plot = event.getPlot();
+    UUID sellerUuid = event.getSellerUuid();
+    String sellerName = event.getSellerName();
+    double price = event.getPrice();
+});
+```
+
+#### PlotSaleRemovedEvent
+
+Fired when a sale listing is cancelled.
+
+```java
+getEventRegistry().registerGlobal(PlotSaleRemovedEvent.class, event -> {
+    Player player = event.getPlayer();
+    Plot plot = event.getPlot();
+});
+```
+
 ## PlotAPI
 
 High-level public API:
@@ -284,13 +334,13 @@ int limit = plotService.getPlayerPlotLimit(player, plotWorld);
 PlotId nextPlot = plotService.findNextAvailablePlot(plotWorld);
 
 // Claim a plot
-ClaimResult result = plotService.claimPlot(player, plotId);
+OperationResult<ClaimResult> result = plotService.claimPlot(player, plotId);
 
 // Unclaim a plot
-UnclaimResult result = plotService.unclaimPlot(player, plotId);
+OperationResult<UnclaimResult> result = plotService.unclaimPlot(player, plotId);
 
 // Transfer ownership
-TransferResult result = plotService.transferPlot(executor, plot, targetPlayer);
+OperationResult<TransferResult> result = plotService.transferPlot(executor, plot, targetPlayer);
 
 // Add member
 boolean success = plotService.addMember(executor, plot, memberUuid, memberName, PlotRole.TRUSTED);
@@ -302,56 +352,126 @@ boolean success = plotService.removeMember(executor, plot, memberUuid);
 boolean success = plotService.setFlag(executor, plot, flagName, flagValue);
 
 // Merge plots
-MergeResult result = plotService.mergePlots(player, plotId, MergeDirection.NORTH);
+OperationResult<MergeResult> result = plotService.mergePlots(player, plotId, MergeDirection.NORTH);
 
 // Unmerge plots
-UnmergeResult result = plotService.unmergePlots(player, plotId);
+OperationResult<UnmergeResult> result = plotService.unmergePlots(player, plotId);
 
 // Get merged plots
 List<Plot> merged = plotService.getMergedPlots(mergeId);
 ```
 
-### Result Enums
+### OperationResult
+
+All service operations return `OperationResult<T>`, a generic wrapper that pairs a result status with an optional i18n message:
 
 ```java
-// ClaimResult
-ClaimResult.SUCCESS
-ClaimResult.ALREADY_CLAIMED
-ClaimResult.MAX_PLOTS_REACHED
-ClaimResult.WORLD_NOT_SETUP
-ClaimResult.INSUFFICIENT_FUNDS
+public record OperationResult<T>(
+    @Nonnull T status,
+    @Nullable String messageKey,
+    @Nonnull Map<String, String> placeholders
+) {
+    // Check if the operation succeeded
+    public boolean isSuccess();
 
-// UnclaimResult
-UnclaimResult.SUCCESS
-UnclaimResult.NOT_CLAIMED
-UnclaimResult.NOT_OWNER
-UnclaimResult.CANCELLED
+    // Send the translated message to a player
+    public void sendMessageTo(@Nonnull PlayerRef playerRef);
 
-// TransferResult
-TransferResult.SUCCESS
-TransferResult.NOT_CLAIMED
-TransferResult.NOT_OWNER
-TransferResult.ALREADY_OWNER
-TransferResult.TARGET_MAX_PLOTS
-TransferResult.CANCELLED
+    // Factory methods
+    public static <T> OperationResult<T> success(@Nonnull T status);
+    public static <T> OperationResult<T> success(@Nonnull T status, @Nonnull String messageKey);
+    public static <T> OperationResult<T> failure(@Nonnull T status, @Nonnull String messageKey);
+    public static <T> OperationResult<T> failure(@Nonnull T status, @Nonnull String messageKey,
+                                                  @Nonnull Map<String, String> placeholders);
 
-// MergeResult
-MergeResult.SUCCESS
-MergeResult.NOT_CLAIMED
-MergeResult.NOT_OWNER
-MergeResult.TARGET_NOT_CLAIMED
-MergeResult.TARGET_NOT_OWNER
-MergeResult.NOT_ADJACENT
-MergeResult.ALREADY_MERGED
-MergeResult.WORLD_NOT_SETUP
-MergeResult.CANCELLED
-
-// UnmergeResult
-UnmergeResult.SUCCESS
-UnmergeResult.NOT_MERGED
-UnmergeResult.NOT_OWNER
-UnmergeResult.CANCELLED
+    // Add placeholders
+    public OperationResult<T> withPlaceholder(@Nonnull String key, @Nonnull String value);
+    public OperationResult<T> withPlaceholders(@Nonnull Map<String, String> additional);
+}
 ```
+
+### Result Enums
+
+#### ClaimResult
+
+| Value | Message Key | Description |
+|-------|-------------|-------------|
+| `SUCCESS` | `success.claim.claimed` | Plot claimed |
+| `ALREADY_CLAIMED` | `error.plot.already_claimed` | Plot already owned |
+| `MAX_PLOTS_REACHED` | `error.plot.max_plots_reached` | Player at plot limit |
+| `WORLD_NOT_SETUP` | `error.world.not_setup` | World not configured |
+| `INSUFFICIENT_FUNDS` | `error.plot.insufficient_funds` | Not enough currency |
+
+#### UnclaimResult
+
+| Value | Message Key | Description |
+|-------|-------------|-------------|
+| `SUCCESS` | `success.delete.unclaimed` | Plot unclaimed |
+| `NOT_CLAIMED` | `error.plot.not_claimed` | Plot not claimed |
+| `NOT_OWNER` | `error.plot.not_owner` | Player not owner |
+| `CANCELLED` | - | Operation cancelled |
+
+#### TransferResult
+
+| Value | Message Key | Description |
+|-------|-------------|-------------|
+| `SUCCESS` | `success.transfer.transferred` | Transfer complete |
+| `NOT_CLAIMED` | `error.plot.not_claimed` | Plot not claimed |
+| `NOT_OWNER` | `error.plot.not_owner` | Player not owner |
+| `ALREADY_OWNER` | `error.transfer.already_owner` | Target already owns plot |
+| `TARGET_MAX_PLOTS` | `error.transfer.target_max_plots` | Target at plot limit |
+| `CANCELLED` | - | Operation cancelled |
+
+#### MergeResult
+
+| Value | Message Key | Description |
+|-------|-------------|-------------|
+| `SUCCESS` | `success.merge.merged` | Merge complete |
+| `NOT_CLAIMED` | `error.plot.not_claimed` | Source not claimed |
+| `NOT_OWNER` | `error.plot.not_owner` | Not source owner |
+| `TARGET_NOT_CLAIMED` | `error.merge.target_not_claimed` | Target not claimed |
+| `TARGET_NOT_OWNER` | `error.merge.target_not_owned` | Not target owner |
+| `NOT_ADJACENT` | `error.merge.not_adjacent` | Plots not adjacent |
+| `ALREADY_MERGED` | `error.merge.already_merged` | Already merged |
+| `CHAIN_MERGE_NOT_ALLOWED` | `error.merge.chain_not_allowed` | Chain merge not supported |
+| `WORLD_NOT_SETUP` | `error.world.not_setup` | World not configured |
+| `CANCELLED` | - | Operation cancelled |
+
+#### UnmergeResult
+
+| Value | Message Key | Description |
+|-------|-------------|-------------|
+| `SUCCESS` | `success.merge.unmerged` | Unmerge complete |
+| `NOT_MERGED` | `error.merge.not_merged` | Plot not merged |
+| `NOT_OWNER` | `error.plot.not_owner` | Not owner |
+| `CANCELLED` | - | Operation cancelled |
+
+#### BuyResult
+
+| Value | Message Key | Description |
+|-------|-------------|-------------|
+| `SUCCESS` | `success.buy.purchased` | Purchase complete |
+| `NOT_CLAIMED` | `error.plot.not_claimed` | Plot not claimed |
+| `NOT_FOR_SALE` | `error.buy.not_for_sale` | Not listed for sale |
+| `OWN_PLOT` | `error.buy.own_plot` | Cannot buy own plot |
+| `INSUFFICIENT_FUNDS` | `error.buy.insufficient_funds` | Not enough currency |
+| `ECONOMY_DISABLED` | `error.economy.disabled` | Economy not enabled |
+| `MAX_PLOTS_REACHED` | `error.plot.max_plots_reached` | Buyer at plot limit |
+| `TRANSACTION_FAILED` | `error.buy.transaction_failed` | Transaction failed |
+| `EVENT_CANCELLED` | `error.common.cancelled` | Event cancelled |
+
+#### SellResult
+
+| Value | Message Key | Description |
+|-------|-------------|-------------|
+| `SUCCESS` | `success.sell.listed` | Listed for sale |
+| `CANCELLED` | `success.sell.cancelled` | Listing cancelled |
+| `NOT_CLAIMED` | `error.plot.not_claimed` | Plot not claimed |
+| `NOT_OWNER` | `error.plot.not_owner` | Not owner |
+| `ALREADY_FOR_SALE` | `error.sell.already_for_sale` | Already listed |
+| `NOT_FOR_SALE` | `error.sell.not_for_sale` | Not listed |
+| `INVALID_PRICE` | `error.sell.invalid_price` | Invalid price |
+| `ECONOMY_DISABLED` | `error.economy.disabled` | Economy not enabled |
 
 ### PlotWorldService
 
@@ -423,19 +543,30 @@ boolean isPlotWorld = protection.isPlotWorld(worldName);
 
 ```java
 public enum PlotRole {
-    OWNER(3),    // Plot owner
-    TRUSTED(2),  // Trusted player (can build)
-    VISITOR(1),  // Default visitor
-    DENIED(0);   // Banned player
+    OWNER(4),    // Plot owner
+    TRUSTED(3),  // Trusted player (can build anytime)
+    MEMBER(2),   // Member (can build when owner is online)
+    GUEST(1),    // Default visitor
+    DENIED(0);   // Denied player
 
     int getLevel();                      // Returns the permission level
     boolean hasAtLeast(PlotRole other);  // Check if this role has at least the given role's level
 }
 ```
 
+### Build Permission by Role
+
+| Role | Can Build | Condition |
+|------|-----------|-----------|
+| OWNER | Yes | Always |
+| TRUSTED | Yes | Always |
+| MEMBER | Yes | Only when owner is online |
+| GUEST | No | - |
+| DENIED | No | Cannot enter plot |
+
 ## Economy Integration
 
-PlotPlus supports custom economy providers.
+PlotPlus supports custom economy providers for plot claiming costs, refunds, and the marketplace.
 
 ```java
 public class MyEconomyProvider implements EconomyProvider {

@@ -12,6 +12,7 @@
 * [Templates](plot-plus/templates.md)
 * [Flags](plot-plus/flags.md)
 * [API](plot-plus/api.md)
+* [Migration](plot-plus/migration.md)
 * [Changelog](plot-plus/changelog.md)
 
 ## Spellbook Plus
