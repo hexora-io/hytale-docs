@@ -10,14 +10,14 @@
 | `plots.home` | `/plot home` | Teleport to own plot |
 | `plots.visit` | `/plot visit` | Visit other players' plots |
 | `plots.middle` | `/plot middle` | Teleport to plot center |
-| `plots.set.home` | `/plot sethome` | Set custom home location |
+| `plots.sethome` | `/plot sethome` | Set custom home location |
 | `plots.trust` | `/plot trust` | Add trusted players (build anytime) |
 | `plots.add` | `/plot add` | Add members (build when owner online) |
 | `plots.remove` | `/plot remove` | Remove players from plot |
 | `plots.deny` | `/plot deny` | Deny players from entering plot |
 | `plots.kick` | `/plot kick` | Kick players from plot |
-| `plots.alias.set` | `/plot alias` | Set or remove plot alias |
-| `plots.set.desc` | `/plot desc` | Set or remove plot description |
+| `plots.alias` | `/plot alias` | Set or remove plot alias |
+| `plots.description` | `/plot desc` | Set or remove plot description |
 | `plots.flag` | `/plot flag` | Change plot flags |
 | `plots.merge` | `/plot merge` | Merge adjacent plots |
 | `plots.unlink` | `/plot unlink` | Unmerge plots |
@@ -25,8 +25,9 @@
 | `plots.info` | `/plot info` | View plot information |
 | `plots.list` | `/plot list` | List owned plots |
 | `plots.confirm` | `/plot confirm` | Confirm pending actions |
-| `plots.command.sell` | `/plot sell` | List plots for sale |
-| `plots.command.buy` | `/plot buy` | Purchase plots from marketplace |
+| `plots.sell` | `/plot sell` | List plots for sale |
+| `plots.buy` | `/plot buy` | Purchase plots from marketplace |
+| `plots.setowner` | `/plot setowner` | Transfer own plot to another player |
 
 ## Admin Permissions
 
@@ -47,7 +48,7 @@ Grant specific admin abilities instead of full `plots.admin`:
 | `plots.admin.command.deleteworld` | Delete plot worlds |
 | `plots.admin.command.reload` | Reload plugin configuration |
 | `plots.admin.command.worldtp` | Teleport to plot worlds |
-| `plots.admin.command.setowner` | Transfer ownership of any plot |
+| `plots.admin.command.setowner` | Transfer ownership of any plot (bypass ownership check) |
 | `plots.admin.command.trust` | Trust players on any plot |
 | `plots.admin.command.add` | Add members to any plot |
 | `plots.admin.command.remove` | Remove players from any plot |
@@ -60,7 +61,8 @@ Grant specific admin abilities instead of full `plots.admin`:
 | `plots.admin.command.sethome` | Set home on any plot |
 | `plots.admin.command.desc` | Set description on any plot |
 | `plots.admin.command.delete` | Delete any plot |
-| `plots.admin.alias.set` | Set alias on any plot |
+| `plots.admin.command.alias` | Set alias on any plot |
+| `plots.admin.command.regenroads` | Regenerate roads in plot worlds |
 
 ### Bypass Permissions
 
@@ -98,4 +100,10 @@ Several permissions were renamed in v2. See the [Migration Guide](migration.md) 
 | `plots.ban` | `plots.deny` |
 | `plots.reset` | `plots.clear` |
 | `plots.claim` (for auto) | `plots.auto` |
-| `plots.transfer` | Removed (now `plots.admin.command.setowner`) |
+| `plots.transfer` | `plots.setowner` |
+| `plots.set.home` | `plots.sethome` |
+| `plots.set.desc` | `plots.description` |
+| `plots.alias.set` | `plots.alias` |
+| `plots.command.sell` | `plots.sell` |
+| `plots.command.buy` | `plots.buy` |
+| `plots.admin.alias.set` | `plots.admin.command.alias` |

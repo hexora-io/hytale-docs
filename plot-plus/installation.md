@@ -2,11 +2,12 @@
 
 ## Fresh Install
 
-1. Download `PlotPlus-x.x.x.jar` from [CurseForge](https://curseforge.com)
-2. Place the JAR file in your server's `mods` folder
-3. Start the server
-4. Edit `config.json` (optional)
-5. Create a plot world with `/plot setup <world_name>` or `/plot setup <world_name> --template=<name>`
+1. Download `PlotPlus-x.x.x.jar` from [CurseForge](https://www.curseforge.com/hytale/mods/plotplus)
+2. (Optional) Download `PlotPlus-Patches-x.x.x.jar` for enhanced protection (BuilderTools, fluid spread, crop harvest)
+3. Place `PlotPlus` in your server's `mods` folder. If using patches, place `PlotPlus-Patches` and `Hyxin` in the `earlyplugins` folder
+4. Start the server
+5. Edit `config.json` (optional)
+6. Create a plot world with `/plot admin setup <world_name>` or `/plot admin setup <world_name> <template>`
 
 ## Upgrading from v1
 
@@ -75,7 +76,7 @@ The database is created automatically.
 After installation:
 
 ```
-/plot setup plots
+/plot admin setup plots
 ```
 
 This creates a world named `plots` using the default `classic` template.
@@ -83,5 +84,5 @@ This creates a world named `plots` using the default `classic` template.
 Or with a specific template:
 
 ```
-/plot setup plots --template=bridge
+/plot admin setup plots bridge
 ```

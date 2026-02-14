@@ -14,7 +14,7 @@ All commands use the `/plot` prefix.
 | `/plot home <number>` | `h` | `plots.home` | Teleport to your plot by number (default: 1) |
 | `/plot visit <target> [number]` | `v`, `teleport`, `goto`, `warp` | `plots.visit` | Visit a player's plot by name or alias |
 | `/plot middle [coords]` | `center`, `centre` | `plots.middle` | Teleport to the center of a plot |
-| `/plot sethome <set\|remove\|reset> [coords]` | `sh`, `seth` | `plots.set.home` | Set or remove a custom home location |
+| `/plot sethome <set\|remove\|reset> [coords]` | `sh`, `seth` | `plots.sethome` | Set or remove a custom home location |
 
 ### Members & Access
 
@@ -30,9 +30,10 @@ All commands use the `/plot` prefix.
 
 | Command | Aliases | Permission | Description |
 |---------|---------|------------|-------------|
-| `/plot alias <name> [coords]` | `setalias`, `sa`, `name`, `rename`, `setname`, `seta`, `nameplot` | `plots.alias.set` | Set or remove an alias for your plot (3-16 chars) |
-| `/plot desc <text> [coords]` | `setdescription`, `setdesc`, `setd`, `description` | `plots.set.desc` | Set or remove a description (max 256 chars) |
-| `/plot flag <flag> <value> [coords]` | `f`, `setflag` | `plots.flag` | Set a plot flag (pvp, explosions) |
+| `/plot alias <name> [coords]` | `setalias`, `sa`, `name`, `rename`, `setname`, `seta`, `nameplot` | `plots.alias` | Set or remove an alias for your plot (3-16 chars) |
+| `/plot desc <text> [coords]` | `setdescription`, `setdesc`, `setd`, `description` | `plots.description` | Set or remove a description (max 256 chars) |
+| `/plot flag set <flag> <value> [coords]` | - | `plots.flag` | Set a plot flag |
+| `/plot flag remove <flag> [coords]` | - | `plots.flag` | Remove a plot flag |
 
 ### Merging
 
@@ -45,8 +46,8 @@ All commands use the `/plot` prefix.
 
 | Command | Aliases | Permission | Description |
 |---------|---------|------------|-------------|
-| `/plot sell <price\|cancel>` | - | `plots.command.sell` | List your plot for sale or cancel a listing |
-| `/plot buy` | - | `plots.command.buy` | Buy the plot you are standing on |
+| `/plot sell <price\|cancel>` | - | `plots.sell` | List your plot for sale or cancel a listing |
+| `/plot buy` | - | `plots.buy` | Buy the plot you are standing on |
 
 ### Information & Utility
 
@@ -63,15 +64,18 @@ All commands use the `/plot` prefix.
 
 ## Admin Commands
 
+All admin commands are grouped under `/plot admin`:
+
 | Command | Aliases | Permission | Description |
 |---------|---------|------------|-------------|
-| `/plot setup <world> [--template=<name>]` | `create` | `plots.admin.command.setup` | Create a new plot world (default template: classic) |
-| `/plot deleteworld <world>` | `delworld`, `removeworld` | `plots.admin.command.deleteworld` | Delete a plot world and all its data |
-| `/plot reload` | `rl` | `plots.admin.command.reload` | Reload configuration, templates, and translations |
-| `/plot worldtp <world>` | `wtp` | `plots.admin.command.worldtp` | Teleport to a plot world spawn |
-| `/plot setowner <player> [coords]` | `owner`, `so`, `seto`, `transfer` | `plots.admin.command.setowner` | Transfer plot ownership (requires confirmation) |
+| `/plot admin setup <world> [template]` | `create` | `plots.admin.command.setup` | Create a new plot world (default template: classic) |
+| `/plot admin deleteworld <world>` | `delworld`, `removeworld` | `plots.admin.command.deleteworld` | Delete a plot world and all its data |
+| `/plot admin reload` | `rl` | `plots.admin.command.reload` | Reload configuration, templates, and translations |
+| `/plot admin worldtp <world>` | `wtp` | `plots.admin.command.worldtp` | Teleport to a plot world spawn |
+| `/plot admin regenroads` | `regenroad`, `rr` | `plots.admin.command.regenroads` | Regenerate all roads in current plot world |
+| `/plot setowner <player> [coords]` | `owner`, `so`, `seto` | `plots.setowner` | Transfer plot ownership (requires confirmation) |
 
-> **Note:** `plots.admin` still grants access to all admin commands. The granular permissions above let you grant specific admin abilities. See [Permissions](permissions.md) for the full list.
+> **Note:** `/plot setowner` is a player command — plot owners can transfer their own plots. Admins with `plots.admin.command.setowner` can transfer any plot. `plots.admin` grants access to all admin commands. See [Permissions](permissions.md) for the full list.
 
 ## Examples
 
@@ -111,7 +115,8 @@ All commands use the `/plot` prefix.
 /plot desc A cozy shop      # Set a description
 /plot sethome set           # Set custom home at your location
 /plot sethome remove        # Remove custom home
-/plot flag pvp true         # Enable PvP
+/plot flag set pvp true     # Enable PvP
+/plot flag remove pvp      # Remove PvP flag
 ```
 
 ### Plot Marketplace
@@ -133,10 +138,11 @@ All commands use the `/plot` prefix.
 ### Admin Commands
 
 ```
-/plot setup creative                          # Create world with classic template
-/plot setup creative --template=bridge        # Create world with bridge template
-/plot deleteworld creative              # Delete a plot world
-/plot worldtp creative                  # Teleport to plot world
-/plot reload                            # Reload config and translations
-/plot setowner Steve                    # Transfer plot ownership
+/plot admin setup creative                    # Create world with classic template
+/plot admin setup creative bridge             # Create world with bridge template
+/plot admin deleteworld creative              # Delete a plot world
+/plot admin worldtp creative                  # Teleport to plot world
+/plot admin reload                            # Reload config and translations
+/plot admin regenroads                        # Regenerate all roads
+/plot setowner Steve                          # Transfer plot ownership
 ```

@@ -4,6 +4,87 @@ All notable changes to this project will be documented in this file.
 
 ---
 
+## [2.0.0-beta.4] - 2026-02-14
+
+### Breaking Changes
+
+#### Permission Standardization
+All command permissions now follow a consistent `plots.<command>` format:
+
+| Old Permission | New Permission |
+|----------------|----------------|
+| `plots.set.home` | `plots.sethome` |
+| `plots.set.desc` | `plots.description` |
+| `plots.alias.set` | `plots.alias` |
+| `plots.command.sell` | `plots.sell` |
+| `plots.command.buy` | `plots.buy` |
+| `plots.admin.command.setowner` | `plots.setowner` |
+| `plots.admin.alias.set` | `plots.admin.command.alias` |
+
+#### Admin Commands Grouped
+All admin commands are now under `/plot admin`:
+- `/plot setup` → `/plot admin setup`
+- `/plot reload` → `/plot admin reload`
+- `/plot worldtp` → `/plot admin worldtp`
+- `/plot deleteworld` → `/plot admin deleteworld`
+- `/plot regenroads` → `/plot admin regenroads`
+
+#### `/plot setowner` is Now a Player Command
+- Plot owners can transfer their own plots (permission: `plots.setowner`)
+- Admins with `plots.admin.command.setowner` can transfer any plot
+
+### New Features
+
+#### `/plot regenroads` Admin Command
+- Regenerate all roads, walls, and intersections in a plot world
+- Useful after changing templates or prefab files
+- Chunk-aware: regenerates roads in all generated areas
+- Non-blocking: server stays fully responsive during regeneration
+- Permission: `plots.admin.command.regenroads`
+
+#### `server_plot` Flag
+- Mark a plot as server-owned with `/plot flag set server_plot true`
+- Server plots display "Server" as the owner in `/plot info`
+- Admin-only flag (requires `plots.admin` permission)
+
+#### Flag Subcommands
+- Flags now use explicit subcommands: `/plot flag set <flag> <value>` and `/plot flag remove <flag>`
+
+#### Corner Prefab Support
+- Intersections surrounded by 3 closed sides now use a dedicated corner prefab
+- Add `corner_prefab` to your template's `border.json` to customize corner intersections
+- Supports automatic rotation based on the open side direction
+
+#### `/p` Command Alias
+- `/p` now works as a shortcut for `/plot`
+
+### Improvements
+
+#### Protection System Migration
+- BuilderTools protection (selection, transform, paste, line tool) moved to patch-level Hyxin mixins via PlotPlus-Patches
+- Crop harvest protection moved to patch-level mixins
+- Fluid spread protection across plot boundaries via patch-level mixins
+
+#### Prefab Walls Toggle
+- Templates can control whether walls are placed between plots using `"walls"` in `border.json`
+- Set `"walls": false` to disable wall generation entirely
+
+#### Chain Merge Improvements
+- Improved road removal logic when merging plots in chain configurations
+
+#### Performance
+- Improved protection check performance with lazy caching
+- Merge/unmerge and worldgen performance optimizations
+
+### Fixed
+- `/plot setowner` crash when target player was on a different world thread
+- Admin `/plot setowner` now bypasses target player's plot limit
+- Fluid spread no longer crosses plot boundaries
+- `{price}` placeholder not working in claim messages
+- Setup command showing incorrect `/plot tp` instead of `/plot admin worldtp`
+
+---
+
 ## [2.0.0-beta.3] - 2026-02-07
 
 ### New Features
@@ -77,7 +158,7 @@ All translation keys have been restructured. The i18n auto-merge system handles 
 - `/plot sell cancel` - Remove plot from sale
 - `/plot buy` - Purchase the plot you're standing on
 - Sale status shown in `/plot info`
-- New permissions: `plots.command.sell`, `plots.command.buy`
+- New permissions: `plots.sell`, `plots.buy`
 
 #### New Commands
 - `/plot kick <player|*>` - Kick players from your plot

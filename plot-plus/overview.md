@@ -13,8 +13,9 @@ PlotPlus is the most advanced plot management mod for Hytale servers.
 - **Kick players** - Remove unwanted visitors from your plot
 - Merge adjacent plots for larger builds (chain merge: L-shapes, 2x2, any configuration)
 - Multi-plot navigation with plot numbers and alias-based visiting
-- BuilderTools integration (brushes, line tool, paste, scripted brushes, selection tool)
-- Selection tool protection (transform, rotation, bedrock layer)
+- BuilderTools integration via [PlotPlus-Patches](https://www.curseforge.com/hytale/mods/plotplus-patches) (brushes, line tool, paste, selection tool)
+- Fluid spread protection across plot boundaries (via PlotPlus-Patches)
+- Crop harvest protection (via PlotPlus-Patches)
 - Customizable plot templates (classic, bridge, custom)
 - Multi-language support (10 languages, customizable, auto-merge)
 - SQLite and MySQL support

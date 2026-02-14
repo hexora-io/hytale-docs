@@ -4,15 +4,24 @@ Flags allow plot owners to customize their plot behavior.
 
 ## Available Flags
 
-| Flag | Type | Default | Description |
-|------|------|---------|-------------|
-| `pvp` | boolean | false | Allow PvP combat on the plot |
-| `explosions` | boolean | false | Allow explosion damage on the plot |
+| Flag | Type | Default | Admin Only | Description |
+|------|------|---------|------------|-------------|
+| `pvp` | boolean | false | No | Allow PvP combat on the plot |
+| `explosions` | boolean | false | No | Allow explosion damage on the plot |
+| `server_plot` | boolean | false | Yes | Mark plot as server-owned (shows "Server" as owner) |
 
 ## Usage
 
+### Set a Flag
+
 ```
-/plot flag <flag> <value>
+/plot flag set <flag> <value>
+```
+
+### Remove a Flag
+
+```
+/plot flag remove <flag>
 ```
 
 ## Examples
@@ -20,25 +29,31 @@ Flags allow plot owners to customize their plot behavior.
 ### Enable PvP
 
 ```
-/plot flag pvp true
+/plot flag set pvp true
 ```
 
 ### Disable PvP
 
 ```
-/plot flag pvp false
+/plot flag set pvp false
+```
+
+### Remove PvP Flag (resets to default)
+
+```
+/plot flag remove pvp
 ```
 
 ### Enable Explosions
 
 ```
-/plot flag explosions true
+/plot flag set explosions true
 ```
 
-### Disable Explosions
+### Mark as Server Plot (admin only)
 
 ```
-/plot flag explosions false
+/plot flag set server_plot true
 ```
 
 ## Flag Behavior
@@ -60,3 +75,10 @@ When `explosions` is set to `false` (default):
 
 When `explosions` is set to `true`:
 - Explosions behave normally
+
+### Server Plot Flag
+
+When `server_plot` is set to `true`:
+- `/plot info` shows "Server" as the plot owner instead of the player name
+- Useful for spawn plots, event areas, or other server-managed plots
+- Requires `plots.admin` permission to set
