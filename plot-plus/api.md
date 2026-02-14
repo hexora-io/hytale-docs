@@ -105,6 +105,7 @@ getEventRegistry().registerGlobal(PlotMemberRemoveEvent.class, event -> {
     Player executor = event.getPlayer();
     Plot plot = event.getPlot();
     UUID memberUuid = event.getMemberUuid();
+    String memberName = event.getMemberName(); // nullable
     PlotRole previousRole = event.getPreviousRole();
     boolean wasUnban = event.wasUnban();
 });
@@ -132,8 +133,64 @@ getEventRegistry().registerGlobal(PlotFlagChangeEvent.class, event -> {
     Player executor = event.getPlayer();
     Plot plot = event.getPlot();
     String flagName = event.getFlagName();
-    String oldValue = event.getOldValue();
-    String newValue = event.getNewValue();
+    String oldValue = event.getOldValue(); // null if new flag
+    String newValue = event.getNewValue(); // null if flag removed
+});
+```
+
+#### PlotAliasChangeEvent
+
+Fired when a plot alias is set or removed.
+
+```java
+getEventRegistry().registerGlobal(PlotAliasChangeEvent.class, event -> {
+    Player player = event.getPlayer();
+    Plot plot = event.getPlot();
+    String oldAlias = event.getOldAlias(); // null if first time
+    String newAlias = event.getNewAlias(); // null if removed
+});
+```
+
+#### PlotDescriptionChangeEvent
+
+Fired when a plot description is set or removed.
+
+```java
+getEventRegistry().registerGlobal(PlotDescriptionChangeEvent.class, event -> {
+    Player player = event.getPlayer();
+    Plot plot = event.getPlot();
+    String oldDescription = event.getOldDescription(); // null if first time
+    String newDescription = event.getNewDescription(); // null if removed
+});
+```
+
+#### PlotHomeChangeEvent
+
+Fired when a plot home location is set or removed.
+
+```java
+getEventRegistry().registerGlobal(PlotHomeChangeEvent.class, event -> {
+    Player player = event.getPlayer();
+    Plot plot = event.getPlot();
+    boolean removed = event.isRemoved();
+    Double oldX = event.getOldHomeX(); // null if no previous home
+    Double oldY = event.getOldHomeY();
+    Double oldZ = event.getOldHomeZ();
+    Double newX = event.getNewHomeX(); // null if removed
+    Double newY = event.getNewHomeY();
+    Double newZ = event.getNewHomeZ();
+});
+```
+
+#### PlotClearEvent
+
+Fired before a plot is cleared (blocks reset to template).
+
+```java
+getEventRegistry().registerGlobal(PlotClearEvent.class, event -> {
+    Player player = event.getPlayer();
+    Plot plot = event.getPlot();
+    boolean isMerged = event.isMerged();
 });
 ```
 
@@ -276,12 +333,13 @@ getEventRegistry().registerGlobal(PlotPurchaseEvent.class, event -> {
 
 #### PlotSaleRemovedEvent
 
-Fired when a sale listing is cancelled.
+Fired before a sale listing is cancelled.
 
 ```java
 getEventRegistry().registerGlobal(PlotSaleRemovedEvent.class, event -> {
     Player player = event.getPlayer();
     Plot plot = event.getPlot();
+    double price = event.getPrice();
 });
 ```
 
@@ -466,6 +524,7 @@ public record OperationResult<T>(
 |-------|-------------|-------------|
 | `SUCCESS` | `success.sell.listed` | Listed for sale |
 | `CANCELLED` | `success.sell.cancelled` | Listing cancelled |
+| `EVENT_CANCELLED` | - | Event cancelled by listener |
 | `NOT_CLAIMED` | `error.plot.not_claimed` | Plot not claimed |
 | `NOT_OWNER` | `error.plot.not_owner` | Not owner |
 | `ALREADY_FOR_SALE` | `error.sell.already_for_sale` | Already listed |
