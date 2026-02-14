@@ -7,7 +7,7 @@
 3. Place `PlotPlus` in your server's `mods` folder. If using patches, place `PlotPlus-Patches` and `Hyxin` in the `earlyplugins` folder
 4. Start the server
 5. Edit `config.json` (optional)
-6. Create a plot world with `/plot admin setup <world_name>` or `/plot admin setup <world_name> <template>`
+6. Create a plot world with `/plot admin setup <world_name>` or `/plot admin setup <world_name> --template=<name>`
 
 ## Upgrading from v1
 
@@ -84,5 +84,5 @@ This creates a world named `plots` using the default `classic` template.
 Or with a specific template:
 
 ```
-/plot admin setup plots bridge
+/plot admin setup plots --template=bridge
 ```

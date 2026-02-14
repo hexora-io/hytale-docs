@@ -127,7 +127,7 @@ flags:
 
 1. Create a new folder in `templates/`
 2. Create `template.yml` with your settings
-3. Use `/plot setup <world_name> --template=<template_name>`
+3. Use `/plot admin setup <world_name> <template_name>`
 
 ## Example: Large Plots Template
 
@@ -161,4 +161,4 @@ flags:
   explosions: false
 ```
 
-Usage: `/plot setup bigplots --template=large`
+Usage: `/plot admin setup bigplots large`
